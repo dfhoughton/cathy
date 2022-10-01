@@ -2,14 +2,20 @@
 
 require_relative "cathy/version"
 
-module Cathy
-  class Error < StandardError; end
+##
+# Cathy models an updatable weighted probability distribution. It keeps track of the frequency of things
+# added to it. Then you can pick one of the things added to it with a probability proportional to the number
+# of times it has been added.
+class Cathy
 
+  ##
+  # Create a new distribution. In its initial state, it will always pick nil.
   def initialize
     @heap = []
     @total = 0
   end
 
+  ##
   # pick an item according to the frequency with which items were added
   def pick
     return if @heap.empty?
@@ -19,7 +25,7 @@ module Cathy
   end
 
   ##
-  # increment the frequency of this item by one
+  # Increment the frequency of this item by one
   def add(item)
     @total += 1
     if (i = index(item))
@@ -48,10 +54,14 @@ module Cathy
     end
   end
 
+  ##
+  # Returns a map from the items added to their frequencies.
   def counts
     @heap.to_h { |i| [i.item, i.count] }
   end
 
+  ##
+  # Generates a distribution from a map from items to frequencies.
   def self.from_counts(counts)
     heap = []
     counts.each_with_index do |(item, count), i|
@@ -77,34 +87,19 @@ module Cathy
     end
   end
 
-  # for debugging
-  def to_graphviz
-    graph = ["digraph picker {", "  node [shape=plaintext];"]
-    @heap.each do |c|
-      label = <<~HTML.strip.gsub(/\s+/, " ")
-        <TABLE CELLBORDER="0">
-          <TR><TD COLSPAN="2">#{c.item}</TD></TR>
-          <TR><TD COLSPAN="2" BGCOLOR="YELLOW">#{c.count}</TD></TR>
-        </TABLE>
-      HTML
-      graph << "  n#{c.index} [label=<#{label}>];"
-    end
-    @heap.each do |c|
-      next unless c.left
-
-      graph << %(  n#{c.index} -> n#{c.left.index} [label="l"];)
-      graph << %(  n#{c.index} -> n#{c.right.index} [label="r"];) if c.right
-    end
-    graph << "}"
-    graph.join("\n")
-  end
-
   private
 
+  # because the heap tends to be sorted from most common to least, a linear
+  # search is reasonably efficient
+  #
+  # this returns the index of an item in the heap
   def index(item)
     @heap.index { |c| c.item == item }
   end
 
+  # a container for things added
+  #
+  # items memoize useful counts
   class Item
     def initialize(item, heap, index, count = 1)
       @heap = heap
@@ -113,14 +108,14 @@ module Cathy
       @item = item
     end
 
+    # find an item in this subtree given an "amount"
     def find(amount)
       if amount < left_count
         left.find(amount)
       elsif amount < non_right
         item
       else
-        amount -= non_right
-        right.find(amount)
+        right&.find(amount - non_right) || item
       end
     end
 
@@ -154,21 +149,25 @@ module Cathy
       @non_right ||= left_count + count
     end
 
+    # move in the heap
     def move!(new_index)
       @index = new_index
       heap[new_index] = self
       clear!
     end
 
+    # increment the frequency count
     def increment!
       @count += 1
       clear!
     end
 
+    # clear memoized information
     def clear!
       @left_count = @right_count = @non_right = @sum = @left = @right = nil
     end
 
+    # clear memoization up the ancestor path
     def clear_parents!
       if (p = parent)
         p.clear!
