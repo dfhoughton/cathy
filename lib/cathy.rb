@@ -4,6 +4,7 @@ require_relative "cathy/version"
 
 module Cathy
   class Error < StandardError; end
+
   def initialize
     @heap = []
     @total = 0
@@ -78,9 +79,9 @@ module Cathy
 
   # for debugging
   def to_graphviz
-    graph = ['digraph picker {', '  node [shape=plaintext];']
+    graph = ["digraph picker {", "  node [shape=plaintext];"]
     @heap.each do |c|
-      label = <<~HTML.strip.gsub(/\s+/, ' ')
+      label = <<~HTML.strip.gsub(/\s+/, " ")
         <TABLE CELLBORDER="0">
           <TR><TD COLSPAN="2">#{c.item}</TD></TR>
           <TR><TD COLSPAN="2" BGCOLOR="YELLOW">#{c.count}</TD></TR>
@@ -94,7 +95,7 @@ module Cathy
       graph << %(  n#{c.index} -> n#{c.left.index} [label="l"];)
       graph << %(  n#{c.index} -> n#{c.right.index} [label="r"];) if c.right
     end
-    graph << '}'
+    graph << "}"
     graph.join("\n")
   end
 

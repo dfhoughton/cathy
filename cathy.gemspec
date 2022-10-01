@@ -8,17 +8,21 @@ Gem::Specification.new do |spec|
   spec.authors = ["David F. Houghton"]
   spec.email = ["dfhougthon@gmail.com"]
 
-  spec.summary = "TODO: Write a short summary, because RubyGems requires one."
-  spec.description = "TODO: Write a longer description or delete this line."
-  spec.homepage = "TODO: Put your gem's website or public repo URL here."
+  spec.summary = "an updatable weighted probability distribution model"
+  spec.description = <<~DESCRIPTION.strip.gsub(/\s+/, " ")
+    Cathy lets you model an updatable weighted probability distribution which you can draw from.
+    For example, suppose you want to randomly pull cards from a deck which consists only of
+    aces, jacks, queens, and kings, with twice as many jacks as aces, twice as many queens as jacks,
+    and twice as many kings as queens. Cathy will model this for you. And you can change the frequency
+    of each card on the fly.
+  DESCRIPTION
+  spec.homepage = "https://github.com/dfhoughton/cathy"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
-
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
-  spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
+  spec.metadata["source_code_uri"] = "https://github.com/dfhoughton/cathy"
+  spec.metadata["changelog_uri"] = "https://github.com/dfhoughton/cathy/blob/main/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
