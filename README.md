@@ -41,9 +41,31 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
+See [here](https://github.com/dfhoughton/cathy/blob/main/examples/chatty_cathy.rb) for an example.
+
 ### `Cathy#new`
 
-Make 
+Make an updatable probability distribution. In this state if you ask for a sample it will only give you `nil`.
+
+### `Cathy#add(thing)`
+
+Increase the frequency of `thing` by one.
+
+### `Cathy#pick`
+
+Draw a sample from the distribution given the frequencies seen so far.
+
+### `Cathy#counts`
+
+Returns a map from things to their frequencies.
+
+This is basically a serialization method.
+
+### `Cathy.from_counts`
+
+Build a distribution from a map from things to their frequencies.
+
+This is basically a deserialization method.
 
 ## Contributing
 
